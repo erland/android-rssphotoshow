@@ -116,13 +116,6 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
             textView.setText(getResources().getText(R.string.noimages));
             TextView loadingView = (TextView) findViewById(R.id.loading);
             loadingView.setVisibility(View.INVISIBLE);
-            //initializeImageFlow("http://www.nasa.gov/rss/lg_image_of_the_day.rss");
-            //initializeImageFlow("http://feeds.gettyimages.com/channels/RecentEditorialEntertainment.rss");
-            //initializeImageFlow("http://feeds.feedburner.com/seanreiser/flickrinterestingness?format=rss2");
-            //initializeImageFlow("http://www.w3wallpapers.com/wotd.php");
-            //initializeImageFlow("http://www.flourish.org/news/flickr-daily-interesting-one.xml");
-            //initializeImageFlow("http://www.flourish.org/news/flickr-daily-interesting.xml");
-            initializeImageFlow("https://picasaweb.google.com/data/feed/base/featured?alt=rss&kind=photo&access=public&slabel=featured&hl=en_US");
         }
 
     }
@@ -625,12 +618,27 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                     }
                 }.execute(currentImage);
             } else {
-                TextView loadingView = (TextView) findViewById(R.id.loading);
-                loadingView.setVisibility(View.INVISIBLE);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ImageView imageView = (ImageView) findViewById(R.id.image);
+                        TextView loadingView = (TextView) findViewById(R.id.loading);
+                        loadingView.setVisibility(View.INVISIBLE);
+                        if (imageView.getDrawable() == null) {
+                            TextView textView = (TextView) findViewById(R.id.title);
+                            textView.setText(getResources().getText(R.string.noimages));
+                        }
+                    }
+                });
             }
         } else {
-            TextView textView = (TextView) findViewById(R.id.title);
-            textView.setText(getResources().getText(R.string.noimages));
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    TextView textView = (TextView) findViewById(R.id.title);
+                    textView.setText(getResources().getText(R.string.noimages));
+                }
+            });
         }
     }
 }

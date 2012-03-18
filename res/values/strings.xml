@@ -2,7 +2,8 @@
 <resources>
     <string name="app_name">RSS Photo Show</string>
     <string name="settings_title">Settings</string>
-    <string name="imageflowurl_title">Image flow RSS URL</string>
+    <string name="repositoryflow_title">Featured image flows</string>
+    <string name="imageflowurl_title">Current RSS image flow</string>
     <string name="showtitle_title">Title mode</string>
     <string name="showtitle_summary_on">Show titles</string>
     <string name="showtitle_summary_off">Don\'t show titles</string>
