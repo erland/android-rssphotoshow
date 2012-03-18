@@ -42,6 +42,7 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
     private Image currentImage = null;
     private Timer nextImageTimer;
     private Timer nextRSSTimer;
+    private ActivitySwipeDetector swipeDetector;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,13 +60,47 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
             titleView.setVisibility(View.GONE);
         }
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+
+        swipeDetector = new ActivitySwipeDetector(new ActivitySwipeDetector.SwipeListener() {
+            @Override
+            public void right2left(View v) {
+                TextView loadingView = (TextView) findViewById(R.id.loading);
+                loadingView.setVisibility(View.VISIBLE);
+                setNextImage(false);
+            }
+
+            @Override
+            public void left2right(View v) {
+                TextView loadingView = (TextView) findViewById(R.id.loading);
+                loadingView.setVisibility(View.VISIBLE);
+                setPrevImage(false);
+            }
+
+            @Override
+            public void top2bottom(View v) {
+                TextView loadingView = (TextView) findViewById(R.id.loading);
+                loadingView.setVisibility(View.VISIBLE);
+                setPrevImage(false);
+            }
+
+            @Override
+            public void bottom2top(View v) {
+                TextView loadingView = (TextView) findViewById(R.id.loading);
+                loadingView.setVisibility(View.VISIBLE);
+                setNextImage(false);
+            }
+        });
         ImageView imageView = (ImageView) findViewById(R.id.image);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setNextImage();
+                TextView loadingView = (TextView) findViewById(R.id.loading);
+                loadingView.setVisibility(View.VISIBLE);
+                setNextImage(true);
             }
         });
+        imageView.setOnTouchListener(swipeDetector);
+
         refreshImageFlow();
     }
 
@@ -105,6 +140,10 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
             } else {
                 titleView.setVisibility(View.GONE);
             }
+        } else if (preference.equals("imagedelay")) {
+            setNextImage(0, false);
+        } else if (preference.equals("rssdelay")) {
+            refreshImageFlow();
         }
     }
 
@@ -292,6 +331,12 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
 
         private void addImage(String url, String title, String mediaTitle, String copyright, String credit) {
             Image image;
+            if (title != null && title.equalsIgnoreCase("no title")) {
+                title = null;
+            }
+            if (mediaTitle != null && mediaTitle.equalsIgnoreCase("no title")) {
+                mediaTitle = null;
+            }
             if (title != null) {
                 if (mediaTitle != null && !title.equals(mediaTitle)) {
                     image = new Image(url, title + ": " + mediaTitle);
@@ -370,23 +415,39 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                         refreshImageFlow();
                     }
                 }, delay * 1000);
-                setNextImage();
+                setNextImage(true);
             }
         }.execute(imageFlowUrl);
 
     }
 
-    private void setNextImage() {
+    private void setPrevImage(boolean shuffle) {
+        setNextImage(-1, shuffle);
+    }
+
+    private void setNextImage(boolean shuffle) {
+        setNextImage(1, shuffle);
+    }
+
+    private void setNextImage(int increment, boolean shuffle) {
         final ImageView imageView = (ImageView) findViewById(R.id.image);
         final int height = imageView.getHeight();
         final int width = imageView.getWidth();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (imageUrlList.size() > 0) {
-            currentImagePos++;
+            currentImagePos += increment;
             if (currentImagePos >= imageUrlList.size()) {
                 currentImagePos = 0;
-                Collections.shuffle(imageUrlList);
+                if (shuffle) {
+                    Collections.shuffle(imageUrlList);
+                }
+            } else if (currentImagePos < 0) {
+                currentImagePos = imageUrlList.size() - 1;
+                if (shuffle) {
+                    Collections.shuffle(imageUrlList);
+                }
             }
+
             if (nextImageTimer != null) {
                 nextImageTimer.cancel();
             }
@@ -444,6 +505,7 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                     @Override
                     protected void onPostExecute(final Drawable drawable) {
                         final ImageView imageView = (ImageView) findViewById(R.id.image);
+                        final TextView loadingView = (TextView) findViewById(R.id.loading);
                         final TextView titleView = (TextView) findViewById(R.id.title);
                         final TextView creditView = (TextView) findViewById(R.id.credit);
                         if (drawable != null) {
@@ -467,6 +529,8 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                                         } else {
                                             creditView.setText("");
                                         }
+                                        TextView loadingView = (TextView) findViewById(R.id.loading);
+                                        loadingView.setVisibility(View.INVISIBLE);
                                         AlphaAnimation fadeIn = new AlphaAnimation(0.00f, 1.00f);
                                         fadeIn.setDuration(1000);
                                         imageView.setAnimation(fadeIn);
@@ -485,9 +549,13 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                                 if (titleView.getVisibility() == View.VISIBLE) {
                                     titleView.startAnimation(fadeOut);
                                 }
+                                if (loadingView.getVisibility() == View.VISIBLE) {
+                                    loadingView.startAnimation(fadeOut);
+                                }
                                 creditView.startAnimation(fadeOut);
                                 imageView.startAnimation(fadeOut);
                             } else {
+                                loadingView.setVisibility(View.INVISIBLE);
                                 AlphaAnimation fadeIn = new AlphaAnimation(0.00f, 1.00f);
                                 fadeIn.setDuration(1000);
                                 imageView.setAnimation(fadeIn);
@@ -519,14 +587,14 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                             nextImageTimer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {
-                                    setNextImage();
+                                    setNextImage(true);
                                 }
                             }, delay * 1000);
                         } else {
                             nextImageTimer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {
-                                    setNextImage();
+                                    setNextImage(true);
                                 }
                             }, 100);
                         }
