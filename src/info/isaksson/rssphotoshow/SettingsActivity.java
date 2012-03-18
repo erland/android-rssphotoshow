@@ -37,7 +37,8 @@ public class SettingsActivity extends PreferenceActivity {
             if (qName.equals("feed")) {
                 String name = attributes.getValue("name");
                 String url = attributes.getValue("url");
-                entries.add(new RepositoryEntry(name, url));
+                String provider = attributes.getValue("provider");
+                entries.add(new RepositoryEntry(name, url, provider));
             }
         }
 
@@ -103,7 +104,7 @@ public class SettingsActivity extends PreferenceActivity {
                 List<String> entries = new ArrayList<String>();
                 List<String> values = new ArrayList<String>();
                 for (RepositoryEntry entry : repositoryEntries) {
-                    entries.add(entry.getName());
+                    entries.add(entry.getName() + (entry.getProvider() != null ? "\n(" + entry.getProvider() + ")" : ""));
                     values.add(entry.getUrl());
                     if (imageFlowUrl != null && imageFlowUrl.getText().equals(entry.getUrl())) {
                         repositoryFlow.setSummary(entry.getName());
@@ -120,10 +121,16 @@ public class SettingsActivity extends PreferenceActivity {
     private static class RepositoryEntry {
         private String name;
         private String url;
+        private String provider;
 
-        private RepositoryEntry(String name, String url) {
+        private RepositoryEntry(String name, String url, String provider) {
             this.name = name;
             this.url = url;
+            this.provider = provider;
+        }
+
+        public String getProvider() {
+            return provider;
         }
 
         public String getName() {
