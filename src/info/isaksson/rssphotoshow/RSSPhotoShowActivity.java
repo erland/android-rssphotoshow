@@ -32,7 +32,6 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -487,7 +486,14 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                         try {
                             image = images[0];
                             String url = image.getUrl();
-                            InputStream is = (InputStream) new URL(url).getContent();
+                            HttpClient client = new DefaultHttpClient();
+                            HttpGet request = new HttpGet(url);
+                            HttpResponse response = client.execute(request);
+                            HttpEntity entity = response.getEntity();
+                            if (entity == null) {
+                                return null;
+                            }
+                            InputStream is = entity.getContent();
                             System.gc();
                             try {
                                 //Decode image size
@@ -495,7 +501,13 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                                 o.inJustDecodeBounds = true;
 
                                 BitmapFactory.decodeStream(is, null, o);
-                                is = (InputStream) new URL(url).getContent();
+
+                                response = client.execute(request);
+                                entity = response.getEntity();
+                                if (entity == null) {
+                                    return null;
+                                }
+                                is = entity.getContent();
 
                                 int scale = 1;
                                 if (o.outHeight > height || o.outWidth > width) {
