@@ -9,7 +9,7 @@ public class ImageTransformer {
             Matcher m = Pattern.compile("http://www.w3wallpapers.com/thumbs/(.*)-.*?.jpg").matcher(image.getUrl());
             if (m.find()) {
                 String imageKey = m.group(1);
-                image.setUrl("http://www.w3wallpapers.com/wallpapers/" + imageKey + "-1600x1200.jpg");
+                image.setUrl("http://www.w3wallpapers.com/thumbs/" + imageKey + "-t3.jpg");
             }
         } else if (image.getUrl().contains("static.flickr.com")) {
             if (image.getUrl().contains("_m.jpg")) {
