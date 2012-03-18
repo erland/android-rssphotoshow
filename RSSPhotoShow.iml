@@ -32,6 +32,7 @@
     <orderEntry type="jdk" jdkName="Android 2.3.3 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="bugsense-trace-1-1-2" level="project" />
+    <orderEntry type="module" module-name="MarketLicensing" />
   </component>
 </module>
 
