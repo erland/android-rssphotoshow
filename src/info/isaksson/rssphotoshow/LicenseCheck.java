@@ -36,7 +36,7 @@ public class LicenseCheck extends Activity {
             // This is a polite way of saying the developer made a mistake
             // while setting up or calling the license checker library.
             // Please examine the error code and fix the error.
-            toast("Error: " + errorCode);
+            toast("Error when validating license: " + errorCode);
             startMainActivity();
 
         }
@@ -54,7 +54,7 @@ public class LicenseCheck extends Activity {
             // and then either shut down the app or limit the user to a
             // restricted set of features.
             // In this example, we show a dialog that takes the user to Market.
-            showDialog(0);
+            showDialog(reason);
         }
     }
 
@@ -94,24 +94,24 @@ public class LicenseCheck extends Activity {
     protected Dialog onCreateDialog(int id) {
         // We have only one dialog.
         return new AlertDialog.Builder(this)
-                .setTitle("Application Not Licensed")
+                .setTitle(getResources().getString(R.string.notlicensed_title))
                 .setCancelable(false)
                 .setMessage(
-                        "This application is not licensed. Please purchase it from Android Market")
-                .setPositiveButton("Buy App",
+                        getResources().getString(R.string.notlicensed_description))
+                .setPositiveButton(getResources().getString(R.string.notlicensed_buy),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int which) {
                                 Intent marketIntent = new Intent(
                                         Intent.ACTION_VIEW,
-                                        Uri.parse("http://market.android.com/details?id="
+                                        Uri.parse("https://play.google.com/store/apps/details?id="
                                                 + getPackageName()));
                                 startActivity(marketIntent);
                                 finish();
                             }
                         })
-                .setNegativeButton("Exit",
+                .setNegativeButton(getResources().getString(R.string.notlicensed_exit),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog,

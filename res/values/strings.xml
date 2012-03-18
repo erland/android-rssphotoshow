@@ -15,6 +15,11 @@
     <string name="debug_summary">Enable debug output below image</string>
     <string name="loading">Loading...</string>
     <string name="noimages">No images, select image flow"</string>
+    <string name="notlicensed_title">Application Not Licensed</string>
+    <string name="notlicensed_description">This application is not licensed. Please purchase it from Google Play
+    </string>
+    <string name="notlicensed_buy">Buy App</string>
+    <string name="notlicensed_exit">Exit</string>
     <string name="eula">By downloading any application from Erland Isaksson or Google™ (here after referered to as “The
         Company”), installing or using this application or any portion thereof (“Application”), you agree to the
         following terms and conditions (the “Terms and Conditions”).
