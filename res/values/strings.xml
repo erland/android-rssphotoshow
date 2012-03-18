@@ -5,9 +5,15 @@
     <string name="imageflowurl_title">Image flow URL</string>
     <string name="imageflowurl_summary">RSS url to image flow</string>
     <string name="showtitle_title">Show title</string>
-    <string name="showtitle_summary">Show title for images</string>
-    <string name="alwaysrefresh_summary">Refresh image even if same url</string>
+    <string name="showtitle_summary_on">Show title for images</string>
+    <string name="showtitle_summary_off">Do not show title for images</string>
+    <string name="alwaysrefresh_summary_on">Refresh image if same as current</string>
+    <string name="alwaysrefresh_summary_off">Do not refresh image if same as current</string>
     <string name="alwaysrefresh_title">Always refresh</string>
+    <string name="imagedelay_title">Image refresh</string>
+    <string name="imagedelay_summary">Image refresh interval</string>
+    <string name="rssdelay_summary">RSS flow refresh interval</string>
+    <string name="rssdelay_title">RSS flow refresh</string>
     <string name="debug_title">Debug mode</string>
     <string name="debug_summary">Enable debug output below image</string>
     <string name="eula">By downloading any application from Erland Isaksson or Google™ (here after referered to as “The

@@ -326,13 +326,15 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                 if (nextImageTimer != null) {
                     nextImageTimer.cancel();
                 }
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(RSSPhotoShowActivity.this);
+                Integer delay = Integer.valueOf(sharedPreferences.getString("rssdelay", "900"));
                 nextRSSTimer = new Timer();
                 nextRSSTimer.schedule(new TimerTask() {
                     @Override
                     public void run() {
                         refreshImageFlow();
                     }
-                }, 900 * 1000);
+                }, delay * 1000);
                 setNextImage();
             }
         }.execute(imageFlowUrl);
@@ -477,12 +479,14 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                         }
                         nextImageTimer = new Timer();
                         if (drawable != null) {
+                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(RSSPhotoShowActivity.this);
+                            Integer delay = Integer.valueOf(sharedPreferences.getString("imagedelay", "60"));
                             nextImageTimer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {
                                     setNextImage();
                                 }
-                            }, 60000);
+                            }, delay * 1000);
                         } else {
                             nextImageTimer.schedule(new TimerTask() {
                                 @Override

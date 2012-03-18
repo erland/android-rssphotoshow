@@ -4,7 +4,19 @@
     <EditTextPreference android:key="imageflowurl"
                         android:title="@string/imageflowurl_title" android:summary="@string/imageflowurl_summary"/>
     <CheckBoxPreference android:key="showtitle"
-                        android:title="@string/showtitle_title" android:summary="@string/showtitle_summary"/>
+                        android:title="@string/showtitle_title" android:summaryOn="@string/showtitle_summary_on"
+                        android:summaryOff="@string/showtitle_summary_off"/>
     <CheckBoxPreference android:key="alwaysrefresh"
-                        android:title="@string/alwaysrefresh_title" android:summary="@string/alwaysrefresh_summary"/>
+                        android:title="@string/alwaysrefresh_title" android:summaryOn="@string/alwaysrefresh_summary_on"
+                        android:summaryOff="@string/alwaysrefresh_summary_off"/>
+    <ListPreference android:key="imagedelay"
+                    android:title="@string/imagedelay_title" android:summary="@string/imagedelay_summary"
+                    android:defaultValue="60"
+                    android:entries="@array/imagedelay"
+                    android:entryValues="@array/imagedelayvalues"/>
+    <ListPreference android:key="rssdelay"
+                    android:title="@string/rssdelay_title" android:summary="@string/rssdelay_summary"
+                    android:defaultValue="900"
+                    android:entries="@array/rssdelay"
+                    android:entryValues="@array/rssdelayvalues"/>
 </PreferenceScreen>
