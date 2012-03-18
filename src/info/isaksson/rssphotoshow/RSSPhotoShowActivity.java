@@ -122,6 +122,7 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
             //initializeImageFlow("http://www.w3wallpapers.com/wotd.php");
             //initializeImageFlow("http://www.flourish.org/news/flickr-daily-interesting-one.xml");
             //initializeImageFlow("http://www.flourish.org/news/flickr-daily-interesting.xml");
+            initializeImageFlow("https://picasaweb.google.com/data/feed/base/featured?alt=rss&kind=photo&access=public&slabel=featured&hl=en_US");
         }
 
     }
@@ -333,14 +334,20 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                         addImage(url, link, currentTitle, currentMediaTitle, currentCopyright, credit);
                     }
                 }
-                if (title != null) {
+                if (title != null && !titles.empty()) {
                     title = titles.pop();
+                } else {
+                    title = null;
                 }
-                if (mediaTitle != null) {
+                if (mediaTitle != null && !mediaTitles.empty()) {
                     mediaTitle = mediaTitles.pop();
+                } else {
+                    mediaTitle = null;
                 }
-                if (mediaCopyright != null) {
+                if (mediaCopyright != null && !mediaCopyrights.empty()) {
                     mediaCopyright = mediaCopyrights.pop();
+                } else {
+                    mediaCopyright = null;
                 }
             }
         }
