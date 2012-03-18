@@ -114,6 +114,7 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
         } else {
             TextView textView = (TextView) findViewById(R.id.title);
             textView.setText(getResources().getText(R.string.noimages));
+            textView.setVisibility(View.VISIBLE);
             TextView loadingView = (TextView) findViewById(R.id.loading);
             loadingView.setVisibility(View.INVISIBLE);
         }
@@ -451,6 +452,10 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
         final int height = imageView.getHeight();
         final int width = imageView.getWidth();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean showTitle = sharedPreferences.getBoolean("showtitle", Boolean.TRUE);
+        if (!showTitle) {
+            findViewById(R.id.title).setVisibility(View.GONE);
+        }
         if (imageUrlList.size() > 0) {
             currentImagePos += increment;
             if (currentImagePos >= imageUrlList.size()) {
@@ -627,6 +632,7 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                         if (imageView.getDrawable() == null) {
                             TextView textView = (TextView) findViewById(R.id.title);
                             textView.setText(getResources().getText(R.string.noimages));
+                            textView.setVisibility(View.VISIBLE);
                         }
                     }
                 });
@@ -637,6 +643,7 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                 public void run() {
                     TextView textView = (TextView) findViewById(R.id.title);
                     textView.setText(getResources().getText(R.string.noimages));
+                    textView.setVisibility(View.VISIBLE);
                 }
             });
         }
