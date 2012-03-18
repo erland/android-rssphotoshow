@@ -38,7 +38,13 @@ public class SettingsActivity extends PreferenceActivity {
                 String name = attributes.getValue("name");
                 String url = attributes.getValue("url");
                 String provider = attributes.getValue("provider");
-                entries.add(new RepositoryEntry(name, url, provider));
+                Boolean alwaysrefresh = Boolean.valueOf(attributes.getValue("alwaysrefresh"));
+                Integer interval = null;
+                String intervalString = attributes.getValue("interval");
+                if (intervalString != null) {
+                    interval = Integer.valueOf(intervalString);
+                }
+                entries.add(new RepositoryEntry(name, url, provider, alwaysrefresh, interval));
             }
         }
 
@@ -62,6 +68,16 @@ public class SettingsActivity extends PreferenceActivity {
                     preference.setSummary(((ListPreference) preference).getEntry());
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("imageflowurl", url);
+                    for (RepositoryEntry entry : repositoryEntries) {
+                        if (entry.getUrl().equals(url)) {
+                            if (entry.getAlwaysRefresh() != null) {
+                                editor.putBoolean("alwaysrefresh", entry.getAlwaysRefresh());
+                            }
+                            if (entry.getRefreshInterval() != null) {
+                                editor.putString("imagedelay", entry.getRefreshInterval().toString());
+                            }
+                        }
+                    }
                     editor.commit();
                 }
             }
@@ -122,11 +138,23 @@ public class SettingsActivity extends PreferenceActivity {
         private String name;
         private String url;
         private String provider;
+        private Boolean alwaysRefresh;
+        private Integer refreshInterval;
 
-        private RepositoryEntry(String name, String url, String provider) {
+        private RepositoryEntry(String name, String url, String provider, Boolean alwaysRefresh, Integer refreshInterval) {
             this.name = name;
             this.url = url;
             this.provider = provider;
+            this.alwaysRefresh = alwaysRefresh;
+            this.refreshInterval = refreshInterval;
+        }
+
+        public Boolean getAlwaysRefresh() {
+            return alwaysRefresh;
+        }
+
+        public Integer getRefreshInterval() {
+            return refreshInterval;
         }
 
         public String getProvider() {
