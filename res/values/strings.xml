@@ -2,20 +2,19 @@
 <resources>
     <string name="app_name">RSS Photo Show</string>
     <string name="settings_title">Settings</string>
-    <string name="imageflowurl_title">Image flow URL</string>
-    <string name="imageflowurl_summary">RSS url to image flow</string>
-    <string name="showtitle_title">Show title</string>
-    <string name="showtitle_summary_on">Show title for images</string>
-    <string name="showtitle_summary_off">Do not show title for images</string>
+    <string name="imageflowurl_title">Image flow RSS URL</string>
+    <string name="showtitle_title">Title mode</string>
+    <string name="showtitle_summary_on">Show titles</string>
+    <string name="showtitle_summary_off">Don\'t show titles</string>
     <string name="alwaysrefresh_summary_on">Refresh image if same as current</string>
     <string name="alwaysrefresh_summary_off">Do not refresh image if same as current</string>
-    <string name="alwaysrefresh_title">Always refresh</string>
-    <string name="imagedelay_title">Image refresh</string>
-    <string name="imagedelay_summary">Image refresh interval</string>
-    <string name="rssdelay_summary">RSS flow refresh interval</string>
-    <string name="rssdelay_title">RSS flow refresh</string>
+    <string name="alwaysrefresh_title">Refresh mode</string>
+    <string name="imagedelay_title">Image refresh interval</string>
+    <string name="rssdelay_title">Flow refresh interval</string>
     <string name="debug_title">Debug mode</string>
     <string name="debug_summary">Enable debug output below image</string>
+    <string name="loading">Loading...</string>
+    <string name="noimages">No images, select image flow"</string>
     <string name="eula">By downloading any application from Erland Isaksson or Google™ (here after referered to as “The
         Company”), installing or using this application or any portion thereof (“Application”), you agree to the
         following terms and conditions (the “Terms and Conditions”).

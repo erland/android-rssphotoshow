@@ -112,9 +112,13 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
         if (imageFlowUrl != null && imageFlowUrl.trim().length() > 0) {
             initializeImageFlow(imageFlowUrl);
         } else {
+            TextView textView = (TextView) findViewById(R.id.title);
+            textView.setText(getResources().getText(R.string.noimages));
+            TextView loadingView = (TextView) findViewById(R.id.loading);
+            loadingView.setVisibility(View.INVISIBLE);
             //initializeImageFlow("http://www.nasa.gov/rss/lg_image_of_the_day.rss");
             //initializeImageFlow("http://feeds.gettyimages.com/channels/RecentEditorialEntertainment.rss");
-            initializeImageFlow("http://feeds.feedburner.com/seanreiser/flickrinterestingness?format=rss2");
+            //initializeImageFlow("http://feeds.feedburner.com/seanreiser/flickrinterestingness?format=rss2");
             //initializeImageFlow("http://www.w3wallpapers.com/wotd.php");
             //initializeImageFlow("http://www.flourish.org/news/flickr-daily-interesting-one.xml");
             //initializeImageFlow("http://www.flourish.org/news/flickr-daily-interesting.xml");
@@ -619,7 +623,7 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
             }
         } else {
             TextView textView = (TextView) findViewById(R.id.title);
-            textView.setText("No images found");
+            textView.setText(getResources().getText(R.string.noimages));
         }
     }
 }
