@@ -77,8 +77,10 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
         } else {
             //initializeImageFlow("http://www.nasa.gov/rss/lg_image_of_the_day.rss");
             //initializeImageFlow("http://feeds.gettyimages.com/channels/RecentEditorialEntertainment.rss");
-            initializeImageFlow("http://feeds.feedburner.com/seanreiser/flickrinterestingness?format=rss2");
+            //initializeImageFlow("http://feeds.feedburner.com/seanreiser/flickrinterestingness?format=rss2");
             //initializeImageFlow("http://www.w3wallpapers.com/wotd.php");
+            //initializeImageFlow("http://www.flourish.org/news/flickr-daily-interesting-one.xml");
+            initializeImageFlow("http://www.flourish.org/news/flickr-daily-interesting.xml");
         }
 
     }
@@ -216,12 +218,28 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                 characters.setLength(0);
                 collectCharacters = false;
             } else if (qName.equals("item")) {
+                List<String> multipleUrls = new ArrayList<String>();
+                List<String> multipleTitles = new ArrayList<String>();
                 if (url == null && description != null) {
-                    Matcher m = Pattern.compile(".*?<img.*?src=\"(.*?)\".*?").matcher(description);
+                    Matcher m = Pattern.compile(".*?<img.*?src=\"(.*?)\"[^>]*title=\"(.*?)\".*?>.*?").matcher(description);
                     while (m.find()) {
                         String link = m.group(1);
-                        if (link.endsWith("jpg") || link.endsWith("jpeg") || link.endsWith("png")) {
+                        String linkTitle = m.group(2);
+                        if (link.contains("jpg") || link.contains("jpeg") || link.contains("png")) {
                             url = link;
+                            title = linkTitle;
+                            multipleUrls.add(url);
+                            multipleTitles.add(title);
+                        }
+                    }
+                    if (url == null) {
+                        m = Pattern.compile(".*?<img.*?src=\"(.*?)\".*?>.*?").matcher(description);
+                        while (m.find()) {
+                            String link = m.group(1);
+                            if (link.contains("jpg") || link.contains("jpeg") || link.contains("png")) {
+                                url = link;
+                                multipleUrls.add(url);
+                            }
                         }
                     }
                 }
@@ -244,29 +262,21 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                             currentCopyright = copyrights.peek();
                         }
                     }
-                    Image image;
-                    if (currentTitle != null) {
-                        if (currentMediaTitle != null) {
-                            image = new Image(url, currentTitle + ": " + currentMediaTitle);
+                    if (multipleUrls.size() > 1) {
+                        if (multipleTitles.size() > 1) {
+                            while (multipleUrls.size() > 0) {
+                                String url = multipleUrls.remove(0);
+                                String title = multipleTitles.remove(0);
+                                addImage(url, currentTitle, title, currentCopyright, credit);
+                            }
                         } else {
-                            image = new Image(url, currentTitle);
+                            for (String url : multipleUrls) {
+                                addImage(url, currentTitle, currentMediaTitle, currentCopyright, credit);
+                            }
                         }
-                    } else if (currentMediaTitle != null) {
-                        image = new Image(url, currentMediaTitle);
                     } else {
-                        image = new Image(url);
+                        addImage(url, currentTitle, currentMediaTitle, currentCopyright, credit);
                     }
-
-                    if (currentCopyright != null && credit != null) {
-                        image.setCopyright(currentCopyright + " (credit to: " + credit);
-                    } else if (currentCopyright != null) {
-                        image.setCopyright(currentCopyright);
-                    } else if (credit != null) {
-                        image.setCopyright(credit);
-
-                    }
-                    ImageTransformer.transform(image);
-                    images.add(image);
                 }
                 if (title != null) {
                     title = titles.pop();
@@ -278,6 +288,31 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                     mediaCopyright = mediaCopyrights.pop();
                 }
             }
+        }
+
+        private void addImage(String url, String title, String mediaTitle, String copyright, String credit) {
+            Image image;
+            if (title != null) {
+                if (mediaTitle != null && !title.equals(mediaTitle)) {
+                    image = new Image(url, title + ": " + mediaTitle);
+                } else {
+                    image = new Image(url, title);
+                }
+            } else if (mediaTitle != null) {
+                image = new Image(url, mediaTitle);
+            } else {
+                image = new Image(url);
+            }
+            if (copyright != null && credit != null) {
+                image.setCopyright(copyright + " (credit to: " + credit);
+            } else if (copyright != null) {
+                image.setCopyright(copyright);
+            } else if (credit != null) {
+                image.setCopyright(credit);
+
+            }
+            ImageTransformer.transform(image);
+            images.add(image);
         }
 
         @Override
