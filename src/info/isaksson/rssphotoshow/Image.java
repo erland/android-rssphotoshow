@@ -2,6 +2,7 @@ package info.isaksson.rssphotoshow;
 
 public class Image {
     private String url;
+    private String link;
     private String title;
     private String copyright;
 
@@ -12,6 +13,14 @@ public class Image {
     public Image(String url, String title) {
         this.url = url;
         this.title = title;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
     public String getUrl() {

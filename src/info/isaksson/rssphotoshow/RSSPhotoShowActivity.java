@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -94,9 +95,10 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TextView loadingView = (TextView) findViewById(R.id.loading);
-                loadingView.setVisibility(View.VISIBLE);
-                setNextImage(true);
+                if (currentImage.getLink() != null) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(currentImage.getLink()));
+                    startActivity(browserIntent);
+                }
             }
         });
         imageView.setOnTouchListener(swipeDetector);
@@ -112,10 +114,10 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
         } else {
             //initializeImageFlow("http://www.nasa.gov/rss/lg_image_of_the_day.rss");
             //initializeImageFlow("http://feeds.gettyimages.com/channels/RecentEditorialEntertainment.rss");
-            //initializeImageFlow("http://feeds.feedburner.com/seanreiser/flickrinterestingness?format=rss2");
+            initializeImageFlow("http://feeds.feedburner.com/seanreiser/flickrinterestingness?format=rss2");
             //initializeImageFlow("http://www.w3wallpapers.com/wotd.php");
             //initializeImageFlow("http://www.flourish.org/news/flickr-daily-interesting-one.xml");
-            initializeImageFlow("http://www.flourish.org/news/flickr-daily-interesting.xml");
+            //initializeImageFlow("http://www.flourish.org/news/flickr-daily-interesting.xml");
         }
 
     }
@@ -162,6 +164,7 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
         Stack<String> mediaTitles = new Stack<String>();
         String mediaTitle = null;
         Stack<String> titles = new Stack<String>();
+        String link = null;
         String title = null;
         String url = null;
         String credit = null;
@@ -183,6 +186,9 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                             attributes.getValue("url").endsWith("png")
             )) {
                 url = attributes.getValue("url");
+                if (attributes.getValue("rdf:about") != null) {
+                    link = attributes.getValue("rdf:about");
+                }
             } else if (qName.equals("item")) {
                 description = null;
                 url = null;
@@ -203,6 +209,8 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                     copyrights.push(copyright);
                 }
                 copyright = null;
+            } else if (qName.equals("link")) {
+                collectCharacters = true;
             } else if (qName.equals("title")) {
                 collectCharacters = true;
             } else if (qName.equals("description")) {
@@ -225,6 +233,10 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                     titles.push(title);
                 }
                 title = characters.toString();
+                characters.setLength(0);
+                collectCharacters = false;
+            } else if (qName.equals("link")) {
+                link = characters.toString();
                 characters.setLength(0);
                 collectCharacters = false;
             } else if (qName.equals("description")) {
@@ -306,15 +318,15 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                             while (multipleUrls.size() > 0) {
                                 String url = multipleUrls.remove(0);
                                 String title = multipleTitles.remove(0);
-                                addImage(url, currentTitle, title, currentCopyright, credit);
+                                addImage(url, link, currentTitle, title, currentCopyright, credit);
                             }
                         } else {
                             for (String url : multipleUrls) {
-                                addImage(url, currentTitle, currentMediaTitle, currentCopyright, credit);
+                                addImage(url, link, currentTitle, currentMediaTitle, currentCopyright, credit);
                             }
                         }
                     } else {
-                        addImage(url, currentTitle, currentMediaTitle, currentCopyright, credit);
+                        addImage(url, link, currentTitle, currentMediaTitle, currentCopyright, credit);
                     }
                 }
                 if (title != null) {
@@ -329,7 +341,7 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
             }
         }
 
-        private void addImage(String url, String title, String mediaTitle, String copyright, String credit) {
+        private void addImage(String url, String link, String title, String mediaTitle, String copyright, String credit) {
             Image image;
             if (title != null && title.equalsIgnoreCase("no title")) {
                 title = null;
@@ -356,6 +368,7 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                 image.setCopyright(credit);
 
             }
+            image.setLink(link);
             ImageTransformer.transform(image);
             images.add(image);
         }
@@ -453,7 +466,7 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
             }
             if (currentImage == null ||
                     !currentImage.getUrl().equals(imageUrlList.get(currentImagePos).getUrl()) ||
-                    sharedPreferences.getBoolean("alwaysrefresh", Boolean.TRUE)) {
+                    sharedPreferences.getBoolean("alwaysrefresh", Boolean.FALSE)) {
 
                 currentImage = imageUrlList.get(currentImagePos);
 
@@ -600,6 +613,9 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                         }
                     }
                 }.execute(currentImage);
+            } else {
+                TextView loadingView = (TextView) findViewById(R.id.loading);
+                loadingView.setVisibility(View.INVISIBLE);
             }
         } else {
             TextView textView = (TextView) findViewById(R.id.title);
