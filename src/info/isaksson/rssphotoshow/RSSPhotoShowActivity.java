@@ -95,7 +95,7 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (currentImage.getLink() != null) {
+                if (currentImage != null && currentImage.getLink() != null) {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(currentImage.getLink()));
                     startActivity(browserIntent);
                 }
