@@ -5,10 +5,12 @@
                         android:title="@string/imageflowurl_title" android:summary="@string/imageflowurl_summary"/>
     <CheckBoxPreference android:key="showtitle"
                         android:title="@string/showtitle_title" android:summaryOn="@string/showtitle_summary_on"
-                        android:summaryOff="@string/showtitle_summary_off"/>
+                        android:summaryOff="@string/showtitle_summary_off"
+                        android:defaultValue="true"/>
     <CheckBoxPreference android:key="alwaysrefresh"
                         android:title="@string/alwaysrefresh_title" android:summaryOn="@string/alwaysrefresh_summary_on"
-                        android:summaryOff="@string/alwaysrefresh_summary_off"/>
+                        android:summaryOff="@string/alwaysrefresh_summary_off"
+                        android:defaultValue="false"/>
     <ListPreference android:key="imagedelay"
                     android:title="@string/imagedelay_title" android:summary="@string/imagedelay_summary"
                     android:defaultValue="60"
