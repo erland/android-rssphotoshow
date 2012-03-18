@@ -106,7 +106,7 @@ public class SettingsActivity extends PreferenceActivity {
                 for (RepositoryEntry entry : repositoryEntries) {
                     entries.add(entry.getName() + (entry.getProvider() != null ? "\n(" + entry.getProvider() + ")" : ""));
                     values.add(entry.getUrl());
-                    if (imageFlowUrl != null && imageFlowUrl.getText().equals(entry.getUrl())) {
+                    if (imageFlowUrl != null && imageFlowUrl.getText() != null && imageFlowUrl.getText().equals(entry.getUrl())) {
                         repositoryFlow.setSummary(entry.getName());
                     }
                 }
