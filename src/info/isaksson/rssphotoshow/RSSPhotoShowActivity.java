@@ -24,6 +24,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -32,6 +33,8 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -109,6 +112,9 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String imageFlowUrl = sharedPreferences.getString("imageflowurl", null);
         if (imageFlowUrl != null && imageFlowUrl.trim().length() > 0) {
+            if (!imageFlowUrl.matches("https?.*")) {
+                imageFlowUrl = "http://" + imageFlowUrl;
+            }
             initializeImageFlow(imageFlowUrl);
         } else {
             TextView textView = (TextView) findViewById(R.id.title);
@@ -396,12 +402,17 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
                 List<Image> imageUrlList = new ArrayList<Image>();
                 HttpClient client = new DefaultHttpClient();
                 try {
-                    HttpResponse response = client.execute(new HttpGet(imageFlowUrls[0]));
-                    HttpEntity entity = response.getEntity();
-                    SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-                    RSSParser rssParser = new RSSParser();
-                    parser.parse(entity.getContent(), rssParser);
-                    imageUrlList = rssParser.getImages();
+                    if (imageFlowUrls[0].matches("^https?.*")) {
+                        HttpResponse response = client.execute(new HttpGet(imageFlowUrls[0]));
+                        HttpEntity entity = response.getEntity();
+                        SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+                        Reader r = new InputStreamReader(entity.getContent());
+                        InputSource is = new InputSource();
+                        is.setCharacterStream(r);
+                        RSSParser rssParser = new RSSParser();
+                        parser.parse(is, rssParser);
+                        imageUrlList = rssParser.getImages();
+                    }
                 } catch (IOException e) {
                     Log.e(RSSPhotoShowActivity.class.getName(), "Error retrieving " + imageFlowUrls[0], e);
                 } catch (ParserConfigurationException e) {
@@ -653,6 +664,10 @@ public class RSSPhotoShowActivity extends Activity implements SharedPreferences.
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    ImageView imageView = (ImageView) findViewById(R.id.image);
+                    imageView.setImageDrawable(null);
+                    TextView loadingView = (TextView) findViewById(R.id.loading);
+                    loadingView.setVisibility(View.INVISIBLE);
                     TextView textView = (TextView) findViewById(R.id.title);
                     textView.setText(getResources().getText(R.string.noimages));
                     textView.setVisibility(View.VISIBLE);
